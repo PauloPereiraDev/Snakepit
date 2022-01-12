@@ -1,0 +1,9 @@
+<resources>
+
+    <string name="app_name">SnakePit</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main_menu">MainMenu</string>
+    <string name="title_activity_snake_pit">SnakePit</string>
+
+</resources>

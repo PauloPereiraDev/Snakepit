@@ -1,0 +1,244 @@
+package a21160605.a21170273.tpamov.isec.pt;
+
+import java.net.Proxy.Type;
+
+import Jogo.MotorJogo;
+import Jogo.TileType;
+import android.R.integer;
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Point;
+import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.View;
+
+public class AreaJogo extends View implements GestureDetector.OnGestureListener {
+
+	final static int TAMANHO_CELULA = 20;
+	final static int NUM_MIN_CELULAS = 25;
+	final static int TAM_MIN_CELULA = 17;
+
+	int tamCelula = -1;
+	int tamGrelha = -1;
+
+	TileType tiles[][];
+	private MotorJogo jogo;
+	private GestureDetector gd;
+
+	public AreaJogo(Context context) {
+		super(context);
+		tiles = null;
+		gd = new GestureDetector(context, this);
+	}
+
+	public void CalculaTam() {
+		Log.i("AreaJogo", " teste Calcula Tamanho");
+		if (tamGrelha > 0)
+			return;
+		tamGrelha = Math.min(getMeasuredWidth() / TAMANHO_CELULA,
+				getMeasuredHeight() / TAMANHO_CELULA);
+		tamCelula = TAMANHO_CELULA;
+		if (tamGrelha < NUM_MIN_CELULAS) {
+			tamCelula = Math.min(getMeasuredWidth() / NUM_MIN_CELULAS,
+					getMeasuredHeight() / NUM_MIN_CELULAS);
+			tamGrelha = NUM_MIN_CELULAS;
+		}
+
+		if (tamGrelha < TAM_MIN_CELULA) {
+			tamGrelha = Math.min(getMeasuredWidth() / TAM_MIN_CELULA,
+					getMeasuredHeight() / TAM_MIN_CELULA);
+			tamCelula = TAM_MIN_CELULA;
+		}
+
+		if (tiles == null) {
+			Log.i("AreaJogo", "************** teste novos titles *************");
+			tiles = new TileType[tamGrelha][tamGrelha];
+			clearAreaJogo();
+		}
+	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		Log.i("teste", "xxx 1");
+		if (gd != null)
+			return gd.onTouchEvent(event);
+		return super.onTouchEvent(event);
+	}
+
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+		int parentWidth = MeasureSpec.getSize(widthMeasureSpec);
+		int parentHeight = MeasureSpec.getSize(heightMeasureSpec);
+		this.setMeasuredDimension(parentWidth, parentHeight);
+		String msg = "" + getMeasuredWidth();
+		Log.i("Area Jogo whith", msg);
+	}
+
+	public boolean onDown(MotionEvent arg0) {
+		Log.i("teste", "xxx 2");
+		if (!jogo.isNewGame()) {
+			jogo.start();
+		}
+		if (jogo.isPausa())
+			jogo.setPausa(false);
+		else
+			jogo.setPausa(true);
+		return false;
+	}
+
+	public boolean onFling(MotionEvent arg0, MotionEvent arg1, float arg2,
+			float arg3) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void onLongPress(MotionEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public boolean onScroll(MotionEvent arg0, MotionEvent arg1, float arg2,
+			float arg3) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void onShowPress(MotionEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public boolean onSingleTapUp(MotionEvent arg0) {
+		return false;
+	}
+
+	public void clearAreaJogo() {
+		Log.i("AreaJogo", " teste ClearAreaJogo");
+		for (int i = 0; i < tiles.length; i++) {
+			for (int j = 0; j < tiles[i].length; j++)
+				tiles[i][j] = null;
+		}
+		Log.i("AreaJogo", " teste Fim ClearAreaJogo");
+	}
+
+	public int getTamCelula() {
+		return tamCelula;
+	}
+
+	public void setTamCelula(int tamCelula) {
+		this.tamCelula = tamCelula;
+	}
+
+	public int getTamGrelha() {
+		return tamGrelha;
+	}
+
+	public void setTamGrelha(int tamGrelha) {
+		this.tamGrelha = tamGrelha;
+	}
+
+	public void setTile(Point p, TileType tipo) {
+		setTile(p.x, p.y, tipo);
+	}
+
+	public void setTile(int x, int y, TileType tipo) {
+		Log.i("AreaJogo", " teste setTitle");
+		if (tiles == null) {
+			Log.i("AreaJogo", " teste title lenght =0");
+			tiles = new TileType[tamGrelha][tamGrelha];
+		}
+		Log.i("AreaJogo", " teste title = tipo" + tiles.length);
+		tiles[x][y] = tipo;
+
+	}
+
+	public TileType getTitle(int x, int y) {
+		Log.i("AreaJogo", " teste getTitle ");
+		if (tiles == null)
+			return null;
+		return tiles[x][y];
+	}
+
+	public void interage() {
+		Log.i("interagir", "alo interacao");
+		postInvalidate();
+	}
+
+	@Override
+	protected void onDraw(Canvas canvas) {
+		Log.i("AreaJogo", "teste AreaJogo OnDraw");
+		super.onDraw(canvas);
+		if (jogo == null)
+			return;
+		
+		if(tamGrelha<0)
+			CalculaTam();
+		Paint paint = new Paint(Paint.DITHER_FLAG);
+		paint.setColor(Color.argb(255, 0, 0, 0));
+		paint.setStyle(Paint.Style.FILL);
+		//desenha limites
+
+		canvas.drawLine(0, 0, tamCelula * tamGrelha, 0, paint);//Norte
+		canvas.drawLine(0, tamCelula * tamGrelha, tamCelula * tamGrelha, tamCelula * tamGrelha, paint);//Sul
+		canvas.drawLine(0, 0, 0, tamCelula * tamGrelha, paint);//Este
+		canvas.drawLine(tamCelula * tamGrelha, 0, tamCelula * tamGrelha, tamCelula * tamGrelha, paint);//Oeste
+	
+		if (jogo.isNewGame()) {
+			Log.i("AreaJogo", "AreaJogo OnDraw");
+			Log.i("AreaJogo", "teste desenha titles");
+			for (int i = 0; i < tamGrelha; i++) {
+				for (int j = 0; j < tamGrelha; j++) {
+					if (tiles[i][j] != null) {
+						drawTile(i * tamCelula, j * tamCelula, tiles[i][j],
+								canvas);
+					}
+				}
+			}
+			Log.i("AreaJogo", "AreaJogo Fim OnDraw");
+		}
+
+	}
+
+	public boolean isFruta() {
+		for (int i = 0; i < tiles.length; i++) {
+			for (int j = 0; j < tiles[i].length; j++) {
+				if (tiles[i][j] == TileType.Fruta)
+					return true;
+			}
+		}
+		return false;
+	}
+
+	private void drawTile(int x, int y, TileType tipo, Canvas canvas) {
+		Paint paint = new Paint();
+		paint.setColor(Color.BLACK);
+		Log.i("AreaJogo", "AreaJogo desenha tipo");
+		switch (tipo) {
+		case Cabeca:
+			Log.i("AreaJogo", "AreaJogo Cabeca" + x + y);
+			paint.setColor(Color.BLACK);
+			canvas.drawRect(x, y, x + tamCelula, y + tamCelula, paint);
+			break;
+		case Corpo:
+		case Cauda:
+			paint.setColor(Color.GREEN);
+			canvas.drawRect(x, y, x + tamCelula, y + tamCelula, paint);
+			break;
+		case Fruta:
+			paint.setColor(Color.RED);
+			canvas.drawCircle(x+(tamCelula/2), y+(tamCelula/2), tamCelula/2, paint);
+			break;
+		}
+
+	}
+
+	public void SetJogo(MotorJogo jogo) {
+		this.jogo = jogo;
+
+	}
+}

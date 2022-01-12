@@ -1,0 +1,394 @@
+package Jogo;
+
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import a21160605.a21170273.tpamov.isec.pt.AreaJogo;
+import android.graphics.Point;
+import android.util.Log;
+
+public class MotorJogo extends Thread {
+
+	private static final long FRAME_TIME = 1000L / 50L;
+	private static final int MIN_SNAKE_LENGTH = 5;
+	private static final int MAX_DIRECTIONS = 3;
+	private Random random;
+	private boolean isNewGame;
+	private boolean isGameOver;
+	private boolean isSetDirection;
+	private AreaJogo board;
+	private boolean pausa;
+	private ArrayList<Point> cobra;
+	private ArrayList<Direcao> direcoes;
+	Direcao direcao;
+	private int score;
+	Timer time;
+
+	private long tempo;
+
+	public MotorJogo(AreaJogo board) {
+		pausa = true;
+		tempo = 50;
+		time = null;
+		random = new Random();
+		setupLongTimeout(tempo);
+		direcao = Direcao.Norte;
+		this.board = board;
+		isNewGame = false;
+		direcoes = new ArrayList<Direcao>();
+		cobra = new ArrayList<Point>();
+		isSetDirection = false;
+	}
+
+	public Direcao getDirecao() {
+		return direcao;
+	}
+
+	public void setDirecao(Direcao direc) {
+		Direcao last = this.direcao;
+		if (!isSetDirection)
+			return;
+		switch (direc) {
+		case Norte:
+			if (last != Direcao.Sul && last != Direcao.Norte) {
+				this.direcao = Direcao.Norte;
+			}
+			break;
+		case Este:
+
+			if (last != Direcao.Este && last != Direcao.Oeste) {
+				this.direcao = Direcao.Este;
+			}
+
+			break;
+		case Oeste:
+
+			if (last != Direcao.Este && last != Direcao.Oeste) {
+				this.direcao = Direcao.Oeste;
+			}
+
+			break;
+		case Sul:
+
+			if (last != Direcao.Sul && last != Direcao.Norte) {
+				this.direcao = Direcao.Sul;
+			}
+
+			break;
+		}
+		isSetDirection=false;
+	}
+
+	synchronized void setupLongTimeout(long timeout) {
+		if (time != null) {
+			time.cancel();
+			time = null;
+		}
+		if (time == null) {
+			Timer time = new Timer();
+			time.schedule(new TimerTask() {
+
+				@Override
+				public void run() {
+					if (!pausa && isNewGame) {
+						Log.i("tempo", "alo");
+						updateGame();
+						board.interage();
+					}
+
+				}
+			}, 0, timeout);
+		}
+	}
+
+	public boolean isPausa() {
+		return pausa;
+	}
+
+	public void setPausa(boolean pausa) {
+		this.pausa = pausa;
+	}
+
+	@Override
+	public void run() {
+		super.run();
+		startGame();
+
+	}
+
+	public boolean isNewGame() {
+		return isNewGame;
+	}
+
+	public void setNewGame(boolean isNewGame) {
+		this.isNewGame = isNewGame;
+	}
+
+	public boolean isGameOver() {
+		return isGameOver;
+	}
+
+	public void setGameOver(boolean isGameOver) {
+		this.isGameOver = isGameOver;
+	}
+
+	private void startGame() {
+		board.CalculaTam();
+		this.isNewGame = true;
+		cobra = new ArrayList<Point>();
+		Log.i("teste", "vvv " + board.getTamGrelha());
+		Point head = new Point(board.getTamGrelha() / 2,
+				board.getTamGrelha() / 2);
+		board.setTile(head, TileType.Cabeca);
+		cobra.clear();
+		cobra.add(head);
+		this.random = new Random();
+		this.direcoes = new ArrayList<Direcao>();
+		direcoes.add(Direcao.Norte);
+		direcao = Direcao.Norte;
+
+		this.pausa = false;
+		spawnFruit();
+	}
+
+	private void updateGame() {
+		/*
+		 * Gets the type of tile that the head of the snake collided with. If
+		 * the snake hit a wall, SnakeBody will be returned, as both conditions
+		 * are handled identically.
+		 */
+		TileType collision = updateSnake();
+		Log.i("MotorJogo", "teste spama fruta");
+
+		if (!board.isFruta())
+			spawnFruit();
+
+		Log.i("MotorJogo", "teste fim spama fruta");
+		/*
+		 * Here we handle the different possible collisions.
+		 * 
+		 * Fruit: If we collided with a fruit, we increment the number of fruits
+		 * that we've eaten, update the score, and spawn a new fruit.
+		 * 
+		 * SnakeBody: If we collided with our tail (or a wall), we flag that the
+		 * game is over and pause the game.
+		 * 
+		 * If no collision occurred, we simply decrement the number of points
+		 * that the next fruit will give us if it's high enough. This adds a bit
+		 * of skill to the game as collecting fruits more quickly will yield a
+		 * higher score.
+		 */
+		if (collision == TileType.Fruta) {
+			score += 100;
+			spawnFruit();
+		} else if (collision == TileType.Corpo) {
+			isGameOver = true;
+			// pausa = true;
+		}
+		Log.i("MotorJogo", "MotorJogo FIm UpdateGame");
+	}
+
+	public void addDireccao(Direcao d) {
+		if (direcoes.size() == 0) {
+			direcoes.add(d);
+			return;
+		}
+		Direcao last = direcoes.get(direcoes.size() - 1);
+		switch (d) {
+
+		case Norte:
+			if (!pausa && !isGameOver) {
+				if (direcoes.size() < MAX_DIRECTIONS) {
+					if (last != Direcao.Sul && last != Direcao.Norte) {
+						direcoes.add(Direcao.Norte);
+					}
+				}
+			}
+			break;
+		case Este:
+			if (!pausa && !isGameOver) {
+				if (direcoes.size() < MAX_DIRECTIONS) {
+					if (last != Direcao.Este && last != Direcao.Oeste) {
+						direcoes.add(Direcao.Este);
+					}
+				}
+			}
+			break;
+		case Oeste:
+			if (!pausa && !isGameOver) {
+				if (direcoes.size() < MAX_DIRECTIONS) {
+					if (last != Direcao.Este && last != Direcao.Oeste) {
+						direcoes.add(Direcao.Oeste);
+					}
+				}
+			}
+			break;
+		case Sul:
+			if (!pausa && !isGameOver) {
+				if (direcoes.size() < MAX_DIRECTIONS) {
+					if (last != Direcao.Sul && last != Direcao.Norte) {
+						direcoes.add(Direcao.Sul);
+					}
+				}
+			}
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	private TileType updateSnake() {
+		Log.i("MotorJogo", "MotorJogo UpdateSnake");
+		Direcao direction = direcoes.get(0);
+
+		/*
+		 * Here we calculate the new point that the snake's head will be at
+		 * after the update.
+		 */
+		Point head = new Point(cobra.get(0));
+		// switch (direction) {
+		switch (direcao) {
+		case Norte:
+			head.y--;
+			break;
+
+		case Sul:
+			head.y++;
+			break;
+
+		case Oeste:
+			head.x--;
+			break;
+
+		case Este:
+			head.x++;
+			break;
+		}
+		isSetDirection = true;
+		/*
+		 * If the snake has moved out of bounds ('hit' a wall), we can just
+		 * return that it's collided with itself, as both cases are handled
+		 * identically.
+		 */
+		if (head.x < 0 || head.x >= board.getTamGrelha() || head.y < 0
+				|| head.y >= board.getTamGrelha()) {
+			return TileType.Corpo; // Pretend we collided with our body.
+		}
+
+		/*
+		 * Here we get the tile that was located at the new head position and
+		 * remove the tail from of the snake and the board if the snake is long
+		 * enough, and the tile it moved onto is not a fruit.
+		 * 
+		 * If the tail was removed, we need to retrieve the old tile again
+		 * incase the tile we hit was the tail piece that was just removed to
+		 * prevent a false game over.
+		 */
+		TileType old = board.getTitle(head.x, head.y);
+		if (old != TileType.Fruta && cobra.size() > MIN_SNAKE_LENGTH) {
+			Point tail = cobra.remove(cobra.size() - 1);
+			board.setTile(tail, null);
+			old = board.getTitle(head.x, head.y);
+		}
+
+		/*
+		 * Update the snake's position on the board if we didn't collide with
+		 * our tail:
+		 * 
+		 * 1. Set the old head position to a body tile. 2. Add the new head to
+		 * the snake. 3. Set the new head position to a head tile.
+		 * 
+		 * If more than one direction is in the queue, poll it to read new
+		 * input.
+		 */
+		if (old != TileType.Corpo) {
+			board.setTile(cobra.get(0), TileType.Corpo);
+			cobra.add(0, head);
+			board.setTile(head, TileType.Cabeca);
+			if (direcoes.size() > 1) {
+				direcoes.remove(0);
+			}
+		}
+
+		return old;
+	}
+
+	private void resetGame() {
+		/*
+		 * Reset the score statistics. (Note that nextFruitPoints is reset in
+		 * the spawnFruit function later on).
+		 */
+		this.score = 0;
+		// this.fruitsEaten = 0;
+
+		/*
+		 * Reset both the new game and game over flags.
+		 */
+		this.isNewGame = false;
+		this.isGameOver = false;
+
+		/*
+		 * Create the head at the center of the board.
+		 */
+		Point head = new Point(board.getTamGrelha() / 2,
+				board.getTamGrelha() / 2);
+
+		/*
+		 * Clear the snake list and add the head.
+		 */
+		cobra.clear();
+		cobra.add(head);
+
+		/*
+		 * Clear the board and add the head.
+		 */
+		board.clearAreaJogo();
+		board.setTile(head, TileType.Cabeca);
+
+		/*
+		 * Clear the directions and add north as the default direction.
+		 */
+		direcoes.clear();
+		direcoes.add(Direcao.Norte);
+
+		/*
+		 * Reset the logic timer.
+		 */
+
+		/*
+		 * Spawn a new fruit.
+		 */
+		spawnFruit();
+	}
+
+	private void spawnFruit() {
+		// Reset the score for this fruit to 100.
+		// this.nextFruitScore = 100;
+
+		/*
+		 * Get a random index based on the number of free spaces left on the
+		 * board.
+		 */
+		int tamGrelha = board.getTamGrelha();
+		Log.i("spawnFruit", "tamGrelha " + board.getTamGrelha()
+				+ " tamanho cobra " + cobra.size());
+		if (tamGrelha < 0)
+			return;
+		int x = random.nextInt(tamGrelha - cobra.size());
+		int y = random.nextInt(tamGrelha - cobra.size());
+		Log.i("AreaJogo", " teste1");
+
+		TileType coiso = board.getTitle(x, y);
+		Log.i("AreaJogo", " teste 2");
+		if (coiso == null) {
+			Log.i("AreaJogo", " teste 3");
+			board.setTile(x, y, TileType.Fruta);
+			return;
+		}
+		// }
+		// }
+	}
+}

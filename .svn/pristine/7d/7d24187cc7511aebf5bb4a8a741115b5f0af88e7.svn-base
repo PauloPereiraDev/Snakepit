@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="NovoJogo">New Game</string>
+    <string name="Score">Score</string>
+    <string name="opcoes">Options</string>
+    <string name="credits">Credits</string>
+    <string name="sair">Exit</string>
+    <string name="SnakePit">SnakePit</string>
+    <string name="Pontos">Score:</string>
+    <string name="pontos_default">0</string>
+</resources>

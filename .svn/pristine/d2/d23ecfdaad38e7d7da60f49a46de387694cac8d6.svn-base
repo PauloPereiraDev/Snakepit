@@ -1,0 +1,120 @@
+package a21160605.a21170273.tpamov.isec.pt;
+
+import Jogo.Direcao;
+import Jogo.MotorJogo;
+import android.app.Activity;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.FrameLayout;
+import android.widget.TextView;
+
+public class SnakePit extends Activity implements SensorEventListener {
+	Sensor accelerometer;
+	Sensor orientation;
+	SensorManager manager;
+	MotorJogo jogo;
+	TextView lbPontos;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_jogo);
+		FrameLayout flareajogo = (FrameLayout) findViewById(R.id.AreaJogo);
+		lbPontos = (TextView) findViewById(R.id.Labpontos);
+		AreaJogo aJogo = new AreaJogo(this);
+		flareajogo.addView(aJogo);
+		setScore(0);
+		// getActionBar().setDisplayHomeAsUpEnabled(true);
+		manager = (SensorManager) getSystemService(SENSOR_SERVICE);
+		jogo = new MotorJogo(aJogo, this);
+
+		accelerometer = manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		orientation = manager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+		aJogo.SetJogo(jogo);
+	}
+
+	public void setScore(int score) {
+		lbPontos.setText(Integer.toString(score));
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.activity_jogo, menu);
+		return true;
+	}
+
+	@Override
+	protected void onPause() {
+		manager.unregisterListener(this);
+		jogo.setPausa(true);
+		super.onPause();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		// manager.registerListener(this, accelerometer,
+		// SensorManager.SENSOR_DELAY_NORMAL);
+		manager.registerListener(this, orientation,
+				SensorManager.SENSOR_DELAY_GAME);
+		jogo.setPausa(false);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// switch (item.getItemId()) {
+		// case android.R.id.home:
+		// NavUtils.navigateUpFromSameTask(this);
+		// return true;
+		// }
+		return super.onOptionsItemSelected(item);
+	}
+
+	public void onAccuracyChanged(Sensor sensor, int accuracy) {
+		// TODO Auto-generated method stub
+
+	}
+
+	float[] mGravity;
+	float[] mGeomagnetic;
+
+	public void onSensorChanged(SensorEvent event) {
+		String msg = "";
+		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
+			mGravity = event.values;
+		if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
+			mGeomagnetic = event.values;
+
+		if (event.sensor.getType() == Sensor.TYPE_ORIENTATION) {
+
+			if (Math.abs(event.values[1]) > Math.abs(event.values[2])) {
+				if (event.values[1] > 0) {
+					msg = "Norte";
+					jogo.addDireccao(Direcao.Norte);
+					jogo.setDirecao(Direcao.Norte);
+				} else {
+					msg = "Sul";
+					jogo.addDireccao(Direcao.Sul);
+					jogo.setDirecao(Direcao.Sul);
+				}
+			} else {
+				if (event.values[2] > 0) {
+					msg = "Oeste";
+					jogo.addDireccao(Direcao.Oeste);
+					jogo.setDirecao(Direcao.Oeste);
+				} else {
+					msg = "Este";
+					jogo.addDireccao(Direcao.Este);
+					jogo.setDirecao(Direcao.Este);
+				}
+			}
+		}
+		// Log.i("Sensor", msg);
+	}
+}

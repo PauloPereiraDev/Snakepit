@@ -1,0 +1,11 @@
+package Jogo;
+
+
+
+public class MotorJogo{
+	
+public MotorJogo(){	
+}
+
+
+}

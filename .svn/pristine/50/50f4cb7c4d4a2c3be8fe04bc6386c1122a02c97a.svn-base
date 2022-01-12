@@ -1,0 +1,114 @@
+package a21160605.a21170273.tpamov.isec.pt;
+
+import android.app.Activity;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.FrameLayout;
+
+public class SnakePit extends Activity implements SensorEventListener {
+	Sensor accelerometer;
+	Sensor orientation;
+	SensorManager manager;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_jogo);
+		FrameLayout flareajogo = (FrameLayout) findViewById(R.id.AreaJogo);
+		AreaJogo aJogo = new AreaJogo(this);
+		flareajogo.addView(aJogo);
+		// getActionBar().setDisplayHomeAsUpEnabled(true);
+		String msg = "" + flareajogo.getWidth();
+		Log.i("SnakePit", msg);
+		manager = (SensorManager) getSystemService(SENSOR_SERVICE);
+
+		accelerometer = manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		orientation = manager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.activity_jogo, menu);
+		return true;
+	}
+
+	@Override
+	protected void onPause() {
+		manager.unregisterListener(this);
+		super.onPause();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		// manager.registerListener(this, accelerometer,
+		// SensorManager.SENSOR_DELAY_NORMAL);
+		manager.registerListener(this, orientation,
+				SensorManager.SENSOR_DELAY_GAME);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// switch (item.getItemId()) {
+		// case android.R.id.home:
+		// NavUtils.navigateUpFromSameTask(this);
+		// return true;
+		// }
+		return super.onOptionsItemSelected(item);
+	}
+
+	public void onAccuracyChanged(Sensor sensor, int accuracy) {
+		// TODO Auto-generated method stub
+
+	}
+
+	float[] mGravity;
+	float[] mGeomagnetic;
+
+	public void onSensorChanged(SensorEvent event) {
+		String msg = "";
+		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
+			mGravity = event.values;
+		if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
+			mGeomagnetic = event.values;
+//		if (mGravity != null && mGeomagnetic != null) {
+//			float R[] = new float[9];
+//			float I[] = new float[9];
+//			boolean success = SensorManager.getRotationMatrix(R, I, mGravity,
+//					mGeomagnetic);
+//			if (success) {
+//				float orientation[] = new float[3];
+//				SensorManager.getOrientation(R, orientation);
+//				msg =""+ orientation[0]; // orientation contains: azimut, pitch
+//											// and roll
+//			}
+//		}
+		//Log.i("gravidade", msg);
+		if (event.sensor.getType() == Sensor.TYPE_ORIENTATION) {
+			
+			//msg="NorteSul"+event.values[1];//Positivo Norte...Negativo SUL
+			//msg += "\nOesteEste" + event.values[2];//positivo oeste... negativo este
+			
+			if(Math.abs(event.values[1])>Math.abs(event.values[2])){
+				if(event.values[1]>0)
+					msg="Norte";
+				else
+					msg="Sul";
+			}
+			else{
+				if(event.values[2]>0)
+					msg="Oeste";
+				else
+					msg="Este";
+			}
+		}
+		Log.i("Sensor", msg);
+	}
+}

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="NovoJogo">Novo Jogo</string>
+    <string name="Score">Pontuação</string>
+    <string name="opcoes">Opções</string>
+    <string name="credits">Créditos</string>
+    <string name="sair">Sair</string>
+    <string name="SnakePit">SnakePit</string>
+    <string name="Pontos">Pontos:</string>
+    <string name="pontos_default">0</string>
+    <string name="Anonimo">Anónimo</string>
+    <string name="Autores">Trabalho realizado por:</string>
+    <string name="returnar">Voltar</string>
+    <string name="SelectSpeed">Seleccione a velocidade</string>
+    <string name="Speed">Velocidade:</string>
+    <string name="records">Limpar recordes</string>
+    <string name="save">Guardar</string>
+    <string name="pause">Pausa</string>
+    <string name="msgprimanoecra">Prima no ecra</string>
+    <string name="msgparacomecar">para começar</string>
+    <string name="gameover">Game Over</string>
+    <string name="nickname">Alcunha</string>
+    <string name="EscolherMapa">Escolher Mapa</string>
+    <string name="InverterSensores">Inverter Sensores</string>
+    <string name="instrucoes">Instruções</string>
+    <string name="instrucoestexto">O objectivo do jogo é conseguir apanhar o maior número de maçãs. Para isso terá de delocar a cobra pelo mapa usando para isso os movimentos do telemóvel. Prima o ecrã para começar ou pausar o jogo e boa sorte.</string>
+    <string name="title_activity_instrucoes">Instruções</string>
+    <string name="title_activity_chose_map">Escolher mapa</string>
+    <string name="Classic">Clássico</string>
+    <string name="Nowalls">Sem Paredes</string>
+    <string name="Cross">Cruz</string>
+    <string name="ChoseMap">Escolher mapa</string>
+    <string name="Maze4">Labirinto 4</string>
+</resources>

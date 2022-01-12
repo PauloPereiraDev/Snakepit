@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">SnakePit</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main_menu">SnakePit</string>
+    <string name="title_activity_snake_pit">SnakePit</string>
+    <string name="showscore">0</string>
+    <string name="title_activity_activity_creditos">Creditos</string>
+    <string name="title_activity_activity_opcoes">Opções</string>
+    <string name="NovoJogo">New Game</string>
+    <string name="Pontos">Score:</string>
+    <string name="SnakePit">SnakePit</string>
+    <string name="sair">Exit</string>
+    <string name="credits">Credits</string>
+    <string name="opcoes">Options</string>
+    <string name="Score">Score</string>
+    <string name="Autores">Developers:</string>
+    <string name="Nome1">António Paulo Pereira</string>
+    <string name="Nome2">Rafael Perdigão Neves</string>
+    <string name="Numero1">a21170273@alunos.isec.pt</string>
+    <string name="Numero2">a21160605@alunos.isec.pt</string>
+    <string name="Cadeira">Arquitecturas Móveis</string>
+    <string name="instrucoestexto">The game objective is to catch as many apples as possible. To do this you must move the snake across the map by using the cellphone movements. Press the screen to start or pause the game and good luck.</string>
+    <string name="Ano">2012–2013</string>
+    <string name="instrucoes">Instructions</string>
+    <string name="escola">DEIS-ISEC</string>
+    <string name="returnar">Return</string>
+    <string name="SelectSpeed">Select Speed</string>
+    <string name="Speed">Speed:</string>
+    <string name="records">Clear Records</string>
+    <string name="save">Save</string>
+    <string name="pause">Pause</string>
+    <string name="msgprimanoecra">Touch on screen</string>
+    <string name="msgparacomecar">to start</string>
+    <string name="gameover">Game Over</string>
+    <string name="title_activity_activity_game_over">ActivityGameOver</string>
+    <string name="nickname">Nickname</string>
+    <string name="pontos_default">0</string>
+    <string name="title_activity_pontuacao_lay">Pontuacao_lay</string>
+    <string name="title_activity_pontuacoes">Pontuacoes</string>
+    <string name="title_activity_activitywin">Activitywin</string>
+    <string name="Anonimo">anonymous</string>
+    <string name="EscolherMapa">Choose map</string>
+    <string name="InverterSensores">reversing Sensors</string>
+    <string name="title_activity_instrucoes">Instruction</string>
+    <string name="title_activity_chose_map">ChoseMap</string>
+    <string name="Classic">Classic</string>
+    <string name="Nowalls">No walls</string>
+    <string name="Cross">Cross</string>
+    <string name="ChoseMap">Chose map</string>
+    <string name="Maze4">Maze 4</string>
+    </resources>
